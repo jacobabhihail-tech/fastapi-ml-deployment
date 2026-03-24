@@ -1,25 +1,31 @@
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 import joblib
 
-# Create simple dataset
+# Simple dataset
 data = {
-    "age": [25, 40, 35, 50, 23, 60, 48, 33],
-    "balance": [1000, 2000, 1500, 3000, 800, 4000, 2500, 1200],
-    "churn": [0, 1, 0, 1, 0, 1, 1, 0]
+    "age": [25, 30, 45, 35, 50],
+    "balance": [20000, 50000, 100000, 75000, 120000],
+    "churn": [0, 0, 1, 0, 1]
 }
 
 df = pd.DataFrame(data)
 
-# Features & target
 X = df[["age", "balance"]]
 y = df["churn"]
 
-# Train model
-model = LogisticRegression()
-model.fit(X, y)
+# Create pipeline
+pipeline = Pipeline([
+    ("scaler", StandardScaler()),
+    ("model", LogisticRegression())
+])
 
-# Save model
-joblib.dump(model, "simple_model.pkl")
+# Train
+pipeline.fit(X, y)
 
-print("✅ Model trained and saved")
+# Save pipeline (IMPORTANT change)
+joblib.dump(pipeline, "model_pipeline.pkl")
+
+print("✅ Pipeline model saved")

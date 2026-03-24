@@ -5,10 +5,9 @@ import pandas as pd
 
 app = FastAPI()
 
-# Load SIMPLE model (age, balance)
-model = joblib.load("simple_model.pkl")
+# Load pipeline (not just model)
+model = joblib.load("model_pipeline.pkl")
 
-# Input schema (must match training)
 class CustomerData(BaseModel):
     age: int
     balance: float
