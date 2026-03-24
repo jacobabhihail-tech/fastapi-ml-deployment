@@ -1,22 +1,28 @@
 from fastapi import FastAPI
-import pandas as pd
+from pydantic import BaseModel
 import joblib
+import pandas as pd
 
 app = FastAPI()
 
-# Load new churn pipeline
-model = joblib.load("churn_pipeline.pkl")
+# Load SIMPLE model (age, balance)
+model = joblib.load("simple_model.pkl")
 
-@app.get("/")
-def home():
-    return {"message": "Churn API running"}
+# Input schema (must match training)
+class CustomerData(BaseModel):
+    age: int
+    balance: float
 
 @app.post("/predict")
-def predict(data: dict):
-    input_df = pd.DataFrame([data])
+def predict(data: CustomerData):
 
-    prediction = model.predict(input_df)[0]
-    probability = model.predict_proba(input_df)[0][1]
+    input_data = pd.DataFrame({
+        "age": [data.age],
+        "balance": [data.balance]
+    })
+
+    prediction = model.predict(input_data)[0]
+    probability = model.predict_proba(input_data)[0][1]
 
     return {
         "prediction": int(prediction),
