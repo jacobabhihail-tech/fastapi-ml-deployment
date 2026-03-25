@@ -1,42 +1,63 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import joblib
 import pandas as pd
-from database import conn, cursor  # DB connection
+import logging
+from database import conn, cursor
 
+# ------------------ Logging Setup ------------------
+logging.basicConfig(
+    filename="app.log",
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
+# ------------------ App ------------------
 app = FastAPI()
 
-# Load pipeline model
-model = joblib.load("model_pipeline.pkl")
+# Load model safely
+try:
+    model = joblib.load("model_pipeline.pkl")
+    logging.info("Model loaded successfully")
+except Exception as e:
+    logging.error(f"Error loading model: {e}")
+    raise e
 
-# Input schema (Pydantic validation)
+# ------------------ Input Schema ------------------
 class CustomerData(BaseModel):
     age: int
     balance: float
 
-# Prediction endpoint
+# ------------------ Endpoint ------------------
 @app.post("/predict")
 def predict(data: CustomerData):
+    try:
+        logging.info(f"Received input: age={data.age}, balance={data.balance}")
 
-    # Convert input to DataFrame
-    input_data = pd.DataFrame({
-        "age": [data.age],
-        "balance": [data.balance]
-    })
+        # Convert input
+        input_data = pd.DataFrame({
+            "age": [data.age],
+            "balance": [data.balance]
+        })
 
-    # Model prediction
-    prediction = model.predict(input_data)[0]
-    probability = model.predict_proba(input_data)[0][1]
+        # Prediction
+        prediction = model.predict(input_data)[0]
+        probability = model.predict_proba(input_data)[0][1]
 
-    # Save result to SQLite DB
-    cursor.execute(
-        "INSERT INTO predictions (age, balance, prediction, probability) VALUES (?, ?, ?, ?)",
-        (data.age, data.balance, int(prediction), float(probability))
-    )
-    conn.commit()
+        logging.info(f"Prediction: {prediction}, Probability: {probability}")
 
-    # Return response
-    return {
-        "prediction": int(prediction),
-        "churn_probability": float(probability)
-    }
+        # Save to DB
+        cursor.execute(
+            "INSERT INTO predictions (age, balance, prediction, probability) VALUES (?, ?, ?, ?)",
+            (data.age, data.balance, int(prediction), float(probability))
+        )
+        conn.commit()
+
+        return {
+            "prediction": int(prediction),
+            "churn_probability": float(probability)
+        }
+
+    except Exception as e:
+        logging.error(f"Error during prediction: {e}")
+        raise HTTPException(status_code=500, detail="Something went wrong")
