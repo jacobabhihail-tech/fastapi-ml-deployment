@@ -106,9 +106,9 @@ Response:
   <img src="./predict_post.png" width="800"/>
 </p>
 
-```
 
-🗄️ Database
+# 🗄️ Database
+```
 SQLite used
 Table: predictions
 Stores:
@@ -117,23 +117,31 @@ Stores:
     prediction
     probability
 
-🐳 Docker Support
+```
+
+# 🐳 Docker Support
+
+```
+
 Build Image:
 docker build -t churn-api .
 
 docker build -t churn-api .
 docker run -p 8000:8000 churn-api
 
-🌐 Live Deployment
+```
 
-👉 https://churn-api-39b4.onrender.com/docs
-
-🚀 Future Improvements
-    Add more features to model
-    Add authentication
-    Switch to PostgreSQL
-    Add frontend UI
+# 🌐 Live Deployment
 
 ```
+👉 https://churn-api-39b4.onrender.com/docs
+
+```
+# 🚀 Future Improvements
+- Add more features to model
+- Add authentication
+- Switch to PostgreSQL
+- Add frontend UI
+
 ## Authur
 Abhihail Jacob
