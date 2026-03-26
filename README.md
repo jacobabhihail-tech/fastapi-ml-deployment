@@ -1,4 +1,11 @@
 # 🚀 Churn Prediction API (FastAPI + ML)
+Production-ready ML API deployed on cloud using FastAPI, Docker, and SQLite.
+
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-API-green)
+![Docker](https://img.shields.io/badge/Docker-Container-blue)
+![ML](https://img.shields.io/badge/MachineLearning-Model-orange)
+![Status](https://img.shields.io/badge/Status-Live-success)
 
 This project is a production-ready Machine Learning API built using FastAPI.  
 It predicts customer churn based on input features and logs predictions into a database.
@@ -87,9 +94,17 @@ Response:
 }
 
 ```
-## Screenshot
-![Swagger UI](./predict_post.png)
 
+## 🌐 Live API
+
+👉 https://churn-api-39b4.onrender.com/docs
+
+
+## 📸 Swagger UI Preview
+
+<p align="center">
+  <img src="./predict_post.png" width="800"/>
+</p>
 
 ```
 
